@@ -103,13 +103,19 @@ const StudySessionPage: React.FC = () => {
     flashcardContainer: {
       display: 'flex',
       justifyContent: 'center',
-      marginBottom: '2rem'
+      marginBottom: '2rem',
+      width: '100%',
+      maxWidth: '400px',
+      margin: '0 auto 2rem auto'
     },
     buttonContainer: {
       display: 'flex',
       justifyContent: 'center',
       gap: '1rem',
-      flexWrap: 'wrap' as const
+      flexWrap: 'wrap' as const,
+      width: '100%',
+      maxWidth: '400px',
+      margin: '0 auto'
     },
     button: {
       padding: '0.75rem 1.5rem',

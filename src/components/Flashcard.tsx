@@ -13,8 +13,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
     container: {
       perspective: '1000px',
       width: '100%',
-      maxWidth: '400px',
-      height: '300px',
+      maxWidth: '300px',
+      height: '200px',
       margin: '0 auto'
     },
     card: {
@@ -35,12 +35,14 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '1.5rem',
+      fontSize: '1.25rem',
       fontWeight: 'bold',
       color: 'white',
       textAlign: 'center' as const,
-      padding: '2rem',
-      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+      padding: '1.5rem',
+      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+      wordWrap: 'break-word' as const,
+      overflow: 'hidden'
     },
     front: {
       backgroundColor: '#3b82f6',
@@ -54,7 +56,12 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
       display: 'flex',
       gap: '1rem',
       justifyContent: 'center',
-      marginTop: '2rem'
+      marginTop: '2rem',
+      marginBottom: '1rem',
+      position: 'relative' as const,
+      zIndex: 10,
+      width: '100%',
+      maxWidth: '300px'
     },
     button: {
       padding: '0.75rem 1.5rem',
@@ -64,7 +71,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
       fontWeight: '600',
       cursor: 'pointer',
       fontSize: '1rem',
-      minWidth: '120px'
+      minWidth: '120px',
+      position: 'relative' as const,
+      zIndex: 10
     },
     correctButton: {
       backgroundColor: '#10b981'
@@ -74,9 +83,19 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
     },
     flipHint: {
       textAlign: 'center' as const,
-      color: '#6b7280',
-      fontSize: '0.9rem',
-      marginTop: '1rem'
+      color: '#374151',
+      fontSize: '1rem',
+      marginTop: '2rem',
+      marginBottom: '1rem',
+      fontWeight: '500',
+      backgroundColor: '#f3f4f6',
+      padding: '0.75rem 1rem',
+      borderRadius: '0.5rem',
+      border: '1px solid #e5e7eb',
+      position: 'relative' as const,
+      zIndex: 10,
+      width: '100%',
+      maxWidth: '300px'
     }
   };
 
@@ -91,7 +110,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       <div style={styles.container}>
         <div style={styles.card} onClick={handleCardClick}>
           <div style={{...styles.cardFace, ...styles.front}}>
@@ -104,9 +123,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
       </div>
       
       {!isFlipped && (
-        <p style={styles.flipHint}>
+        <div style={styles.flipHint}>
           Click the card to flip and see the translation
-        </p>
+        </div>
       )}
       
       {isFlipped && (
