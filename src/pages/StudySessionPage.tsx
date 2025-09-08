@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getCardsByCategory, Flashcard } from '../data/flashcards';
-import Flashcard from '../components/Flashcard';
+import { getCardsByCategory } from '../data/flashcards';
+import type { Flashcard } from '../data/flashcards';
+import FlashcardComponent from '../components/Flashcard';
 
 const StudySessionPage: React.FC = () => {
   const { category } = useParams<{ category: string }>();
@@ -243,7 +244,7 @@ const StudySessionPage: React.FC = () => {
       </div>
 
       <div style={styles.flashcardContainer}>
-        <Flashcard
+        <FlashcardComponent
           card={currentCard}
           onAnswer={handleAnswer}
           isFlipped={isFlipped}
