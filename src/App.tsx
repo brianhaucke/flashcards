@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import CategorySelectionPage from './pages/CategorySelectionPage';
 import StudySessionPage from './pages/StudySessionPage';
+import RedoPage from './pages/RedoPage';
+import QuizSelectionPage from './pages/QuizSelectionPage';
+import QuizPage from './pages/QuizPage';
 import './App.css';
 
 const placeholderStyle = {
@@ -19,7 +22,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/study" element={<CategorySelectionPage />} />
           <Route path="/study/:category" element={<StudySessionPage />} />
-          <Route path="/quiz" element={<div style={placeholderStyle}>Quiz Mode - Coming Soon</div>} />
+          <Route path="/redo" element={<RedoPage />} />
+          <Route path="/quiz" element={<QuizSelectionPage />} />
+          <Route path="/quiz/:category" element={<QuizPage />} />
           <Route path="/stats" element={<div style={placeholderStyle}>Statistics - Coming Soon</div>} />
         </Routes>
       </div>

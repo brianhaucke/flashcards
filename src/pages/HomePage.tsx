@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const [hasIncorrectCards, setHasIncorrectCards] = useState(false);
+
+  useEffect(() => {
+    // Check if there are any incorrect cards stored in localStorage
+    const incorrectCards = localStorage.getItem('incorrectCards');
+    setHasIncorrectCards(incorrectCards ? JSON.parse(incorrectCards).length > 0 : false);
+  }, []);
 
   const styles = {
     container: {
@@ -55,6 +62,9 @@ const HomePage: React.FC = () => {
     },
     statsButton: {
       backgroundColor: '#8b5cf6'
+    },
+    redoButton: {
+      backgroundColor: '#f59e0b'
     }
   };
 
@@ -89,6 +99,15 @@ const HomePage: React.FC = () => {
           >
             📊 Statistics
           </button>
+          
+          {hasIncorrectCards && (
+            <button
+              onClick={() => navigate('/redo')}
+              style={{...styles.button, ...styles.redoButton}}
+            >
+              🔄 Redo Wrong Cards
+            </button>
+          )}
         </div>
       </div>
     </div>

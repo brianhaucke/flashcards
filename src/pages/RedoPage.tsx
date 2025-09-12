@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getCardsByCategory } from '../data/flashcards';
+import { useNavigate } from 'react-router-dom';
 import type { Flashcard } from '../data/flashcards';
 import FlashcardComponent from '../components/Flashcard';
 
-const StudySessionPage: React.FC = () => {
-  const { category } = useParams<{ category: string }>();
+const RedoPage: React.FC = () => {
   const navigate = useNavigate();
   const [cards, setCards] = useState<Flashcard[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [incorrectCards, setIncorrectCards] = useState<Flashcard[]>([]);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [stats, setStats] = useState({ correct: 0, incorrect: 0 });
 
   useEffect(() => {
-    if (category) {
-      const categoryCards = getCardsByCategory(category);
-      setCards(categoryCards);
+    // Load incorrect cards from localStorage
+    const storedIncorrectCards = localStorage.getItem('incorrectCards');
+    if (storedIncorrectCards) {
+      const incorrectCards = JSON.parse(storedIncorrectCards);
+      setCards(incorrectCards);
     }
-  }, [category]);
+  }, []);
 
   const handleFlip = () => {
     setIsFlipped(true);
@@ -30,12 +29,13 @@ const StudySessionPage: React.FC = () => {
     
     if (isCorrect) {
       setStats(prev => ({ ...prev, correct: prev.correct + 1 }));
+      // Remove this card from the incorrect cards list
+      const updatedCards = cards.filter((_, index) => index !== currentCardIndex);
+      setCards(updatedCards);
+      // Update localStorage
+      localStorage.setItem('incorrectCards', JSON.stringify(updatedCards));
     } else {
       setStats(prev => ({ ...prev, incorrect: prev.incorrect + 1 }));
-      const newIncorrectCards = [...incorrectCards, currentCard];
-      setIncorrectCards(newIncorrectCards);
-      // Save to localStorage
-      localStorage.setItem('incorrectCards', JSON.stringify(newIncorrectCards));
     }
 
     // Hide the answer immediately to prevent flashing
@@ -51,28 +51,14 @@ const StudySessionPage: React.FC = () => {
     }, 300);
   };
 
-  const handleRedoIncorrect = () => {
-    if (incorrectCards.length > 0) {
-      setCards(incorrectCards);
-      setCurrentCardIndex(0);
-      setIsFlipped(false);
-      setSessionComplete(false);
-      setStats({ correct: 0, incorrect: 0 });
-    }
-  };
-
   const handleReset = () => {
-    if (category) {
-      const categoryCards = getCardsByCategory(category);
-      setCards(categoryCards);
-      setCurrentCardIndex(0);
-      setIsFlipped(false);
-      setSessionComplete(false);
-      setIncorrectCards([]);
-      setStats({ correct: 0, incorrect: 0 });
-      // Clear localStorage
-      localStorage.removeItem('incorrectCards');
-    }
+    // Clear all incorrect cards from localStorage
+    localStorage.removeItem('incorrectCards');
+    setCards([]);
+    setCurrentCardIndex(0);
+    setIsFlipped(false);
+    setSessionComplete(false);
+    setStats({ correct: 0, incorrect: 0 });
   };
 
   const styles = {
@@ -142,8 +128,8 @@ const StudySessionPage: React.FC = () => {
       backgroundColor: '#6b7280',
       color: 'white'
     },
-    successButton: {
-      backgroundColor: '#10b981',
+    dangerButton: {
+      backgroundColor: '#ef4444',
       color: 'white'
     },
     completionCard: {
@@ -168,17 +154,29 @@ const StudySessionPage: React.FC = () => {
     }
   };
 
-  if (!category || cards.length === 0) {
+  if (cards.length === 0 && !sessionComplete) {
     return (
       <div style={styles.container}>
         <div style={styles.completionCard}>
-          <h2 style={styles.completionTitle}>Category not found</h2>
-          <button
-            onClick={() => navigate('/study')}
-            style={{...styles.button, ...styles.primaryButton}}
-          >
-            Back to Categories
-          </button>
+          <h2 style={styles.completionTitle}>🎉 No Wrong Cards!</h2>
+          <p style={styles.completionStats}>
+            You don't have any cards marked as incorrect. Great job!
+          </p>
+          
+          <div style={styles.buttonContainer}>
+            <button
+              onClick={() => navigate('/study')}
+              style={{...styles.button, ...styles.primaryButton}}
+            >
+              📚 Start Studying
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              style={{...styles.button, ...styles.secondaryButton}}
+            >
+              🏠 Back to Home
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -192,36 +190,39 @@ const StudySessionPage: React.FC = () => {
     return (
       <div style={styles.container}>
         <div style={styles.completionCard}>
-          <h2 style={styles.completionTitle}>🎉 Study Session Complete!</h2>
+          <h2 style={styles.completionTitle}>🎉 Redo Session Complete!</h2>
           <div style={styles.completionStats}>
             <p>Correct: {stats.correct}</p>
             <p>Incorrect: {stats.incorrect}</p>
             <p>Accuracy: {accuracy}%</p>
-            {incorrectCards.length > 0 && (
-              <p>Cards to review: {incorrectCards.length}</p>
-            )}
+            <p>Remaining wrong cards: {cards.length}</p>
           </div>
           
           <div style={styles.buttonContainer}>
-            {incorrectCards.length > 0 && (
+            {cards.length > 0 && (
               <button
-                onClick={handleRedoIncorrect}
-                style={{...styles.button, ...styles.successButton}}
+                onClick={() => {
+                  setCurrentCardIndex(0);
+                  setIsFlipped(false);
+                  setSessionComplete(false);
+                  setStats({ correct: 0, incorrect: 0 });
+                }}
+                style={{...styles.button, ...styles.primaryButton}}
               >
-                🔄 Redo Wrong Cards ({incorrectCards.length})
+                🔄 Continue Redo
               </button>
             )}
             <button
               onClick={handleReset}
-              style={{...styles.button, ...styles.primaryButton}}
+              style={{...styles.button, ...styles.dangerButton}}
             >
-              🔄 Study Again
+              🗑️ Clear All Wrong Cards
             </button>
             <button
               onClick={() => navigate('/study')}
               style={{...styles.button, ...styles.secondaryButton}}
             >
-              📚 Choose Another Category
+              📚 Study New Category
             </button>
             <button
               onClick={() => navigate('/')}
@@ -242,7 +243,7 @@ const StudySessionPage: React.FC = () => {
     <div style={styles.container}>
       <div style={styles.header}>
         <h1 style={styles.title}>
-          📚 Studying: {category.charAt(0).toUpperCase() + category.slice(1)}
+          🔄 Redo Wrong Cards
         </h1>
         <p style={styles.progress}>{progress}</p>
         
@@ -269,10 +270,16 @@ const StudySessionPage: React.FC = () => {
 
       <div style={styles.buttonContainer}>
         <button
+          onClick={handleReset}
+          style={{...styles.button, ...styles.dangerButton}}
+        >
+          🗑️ Clear All Wrong Cards
+        </button>
+        <button
           onClick={() => navigate('/study')}
           style={{...styles.button, ...styles.secondaryButton}}
         >
-          ← Back to Categories
+          ← Back to Study
         </button>
         <button
           onClick={() => navigate('/')}
@@ -285,4 +292,4 @@ const StudySessionPage: React.FC = () => {
   );
 };
 
-export default StudySessionPage;
+export default RedoPage;

@@ -10,27 +10,37 @@ interface FlashcardProps {
 
 const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip }) => {
   const styles = {
-    container: {
-      perspective: '1000px',
+    mainContainer: {
+      display: 'flex',
+      flexDirection: 'column' as const,
+      alignItems: 'center',
+      width: '100%',
+      maxWidth: '400px',
+      margin: '0 auto',
+      padding: '1rem 0'
+    },
+    cardContainer: {
       width: '100%',
       maxWidth: '300px',
       height: '200px',
-      margin: '0 auto'
+      margin: '0 auto 3rem auto',
+      position: 'relative' as const,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: '-20px'
     },
     card: {
       width: '100%',
       height: '100%',
       position: 'relative' as const,
-      transformStyle: 'preserve-3d' as const,
-      transition: 'transform 0.6s',
-      transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      transition: 'opacity 0.3s ease-in-out'
     },
     cardFace: {
       position: 'absolute' as const,
       width: '100%',
       height: '100%',
-      backfaceVisibility: 'hidden' as const,
       borderRadius: '1rem',
       display: 'flex',
       alignItems: 'center',
@@ -42,26 +52,26 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
       padding: '1.5rem',
       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
       wordWrap: 'break-word' as const,
-      overflow: 'hidden'
+      overflow: 'hidden',
+      top: 0,
+      left: 0,
+      transition: 'opacity 0.3s ease-in-out'
     },
     front: {
       backgroundColor: '#3b82f6',
-      transform: 'rotateY(0deg)'
+      opacity: isFlipped ? 0 : 1
     },
     back: {
       backgroundColor: '#10b981',
-      transform: 'rotateY(180deg)'
+      opacity: isFlipped ? 1 : 0
     },
     buttonContainer: {
       display: 'flex',
       gap: '1rem',
       justifyContent: 'center',
-      marginTop: '2rem',
-      marginBottom: '1rem',
-      position: 'relative' as const,
-      zIndex: 10,
       width: '100%',
-      maxWidth: '300px'
+      maxWidth: '300px',
+      marginTop: '1rem'
     },
     button: {
       padding: '0.75rem 1.5rem',
@@ -71,9 +81,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
       fontWeight: '600',
       cursor: 'pointer',
       fontSize: '1rem',
-      minWidth: '120px',
-      position: 'relative' as const,
-      zIndex: 10
+      minWidth: '120px'
     },
     correctButton: {
       backgroundColor: '#10b981'
@@ -85,17 +93,14 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
       textAlign: 'center' as const,
       color: '#374151',
       fontSize: '1rem',
-      marginTop: '2rem',
-      marginBottom: '1rem',
       fontWeight: '500',
       backgroundColor: '#f3f4f6',
       padding: '0.75rem 1rem',
       borderRadius: '0.5rem',
       border: '1px solid #e5e7eb',
-      position: 'relative' as const,
-      zIndex: 10,
       width: '100%',
-      maxWidth: '300px'
+      maxWidth: '300px',
+      marginTop: '1rem'
     }
   };
 
@@ -110,8 +115,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <div style={styles.container}>
+    <div style={styles.mainContainer}>
+      <div style={styles.cardContainer}>
         <div style={styles.card} onClick={handleCardClick}>
           <div style={{...styles.cardFace, ...styles.front}}>
             {card.spanish}
