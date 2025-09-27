@@ -77,7 +77,7 @@ test.describe('Quiz Mode', () => {
       await expect(page.getByText('What does "el gato" mean?')).toBeVisible();
       
       // Check options (should be 4)
-      const options = page.locator('button').filter({ hasText: /the (cat|dog|bird|fish)/ });
+      const options = page.locator('button').filter({ hasText: /the (cat|dog|bird|fish|house|horse|cow|pig|sheep)/ });
       await expect(options).toHaveCount(4);
     });
 
@@ -107,11 +107,23 @@ test.describe('Quiz Mode', () => {
       // Answer all questions correctly
       for (let i = 0; i < 5; i++) {
         // Find and click the correct answer (it's always the first option that matches the English translation)
-        const correctAnswer = await page.locator('button').filter({ hasText: /the (cat|dog|bird|fish|horse)/ }).first().textContent();
+        const correctAnswer = await page.locator('button').filter({ hasText: /the (cat|dog|bird|fish|horse|house|cow|pig|sheep)/ }).first().textContent();
         await page.getByRole('button', { name: correctAnswer! }).click();
-        await page.getByRole('button', { name: 'Next Question' }).click();
-        await page.waitForTimeout(100);
+        
+        // Handle both "Next Question" and "Finish Quiz" buttons
+        const nextButton = page.getByRole('button', { name: 'Next Question' });
+        const finishButton = page.getByRole('button', { name: 'Finish Quiz' });
+        
+        if (await nextButton.isVisible()) {
+          await nextButton.click();
+        } else if (await finishButton.isVisible()) {
+          await finishButton.click();
+        }
+        await page.waitForTimeout(300);
       }
+      
+      // Wait for completion screen to appear
+      await page.waitForTimeout(1000);
       
       // Check completion screen
       await expect(page.getByRole('heading', { name: '🎉 Quiz Complete!' })).toBeVisible();
@@ -123,9 +135,18 @@ test.describe('Quiz Mode', () => {
     test('should navigate to new quiz from completion screen', async ({ page }) => {
       // Complete quiz quickly
       for (let i = 0; i < 5; i++) {
-        const correctAnswer = await page.locator('button').filter({ hasText: /the (cat|dog|bird|fish|horse)/ }).first().textContent();
+        const correctAnswer = await page.locator('button').filter({ hasText: /the (cat|dog|bird|fish|horse|house|cow|pig|sheep)/ }).first().textContent();
         await page.getByRole('button', { name: correctAnswer! }).click();
-        await page.getByRole('button', { name: 'Next Question' }).click();
+        
+        // Handle both "Next Question" and "Finish Quiz" buttons
+        const nextButton = page.getByRole('button', { name: 'Next Question' });
+        const finishButton = page.getByRole('button', { name: 'Finish Quiz' });
+        
+        if (await nextButton.isVisible()) {
+          await nextButton.click();
+        } else if (await finishButton.isVisible()) {
+          await finishButton.click();
+        }
         await page.waitForTimeout(100);
       }
       
@@ -209,7 +230,16 @@ test.describe('Quiz Mode', () => {
       for (let i = 0; i < 5; i++) {
         await page.getByPlaceholder('Type your answer here...').fill(answers[i]);
         await page.getByRole('button', { name: 'Submit Answer' }).click();
-        await page.getByRole('button', { name: 'Next Question' }).click();
+        
+        // Handle both "Next Question" and "Finish Quiz" buttons
+        const nextButton = page.getByRole('button', { name: 'Next Question' });
+        const finishButton = page.getByRole('button', { name: 'Finish Quiz' });
+        
+        if (await nextButton.isVisible()) {
+          await nextButton.click();
+        } else if (await finishButton.isVisible()) {
+          await finishButton.click();
+        }
         await page.waitForTimeout(100);
       }
       

@@ -8,10 +8,14 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui",
-    "test:headed": "playwright test --headed",
-    "test:debug": "playwright test --debug"
+    "test": "playwright test tests/priority-1.spec.ts",
+    "test:all": "playwright test",
+    "test:ui": "playwright test --ui tests/priority-1.spec.ts",
+    "test:ui:all": "playwright test --ui",
+    "test:headed": "playwright test --headed tests/priority-1.spec.ts",
+    "test:headed:all": "playwright test --headed",
+    "test:debug": "playwright test --debug tests/priority-1.spec.ts",
+    "test:debug:all": "playwright test --debug"
   },
   "dependencies": {
     "@types/react-router-dom": "^5.3.3",

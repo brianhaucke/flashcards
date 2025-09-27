@@ -41,20 +41,23 @@ test.describe('Navigation', () => {
     await page.getByRole('button', { name: '🐾 Animals' }).click();
     
     // Study a few cards
-    await page.locator('[style*="cursor: pointer"]').first().click();
+    await page.locator('div[style*="transform: rotateY"]').first().click();
     await page.getByRole('button', { name: '✅ I got it right' }).click();
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(600);
     
-    await page.locator('[style*="cursor: pointer"]').first().click();
+    await page.locator('div[style*="transform: rotateY"]').first().click();
     await page.getByRole('button', { name: '❌ I got it wrong' }).click();
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(600);
     
     // Complete the session
     for (let i = 2; i < 5; i++) {
-      await page.locator('[style*="cursor: pointer"]').first().click();
+      await page.locator('div[style*="transform: rotateY"]').first().click();
       await page.getByRole('button', { name: '✅ I got it right' }).click();
-      await page.waitForTimeout(400);
+      await page.waitForTimeout(600);
     }
+    
+    // Wait for completion screen to appear
+    await page.waitForTimeout(1000);
     
     // Should show completion screen with redo option
     await expect(page.getByRole('heading', { name: '🎉 Study Session Complete!' })).toBeVisible();
@@ -92,9 +95,17 @@ test.describe('Navigation', () => {
     
     // Complete quiz
     for (let i = 0; i < 5; i++) {
-      const correctAnswer = await page.locator('button').filter({ hasText: /the (cat|dog|bird|fish|horse)/ }).first().textContent();
+      const correctAnswer = await page.locator('button').filter({ hasText: /the (cat|dog|bird|fish|horse|house|cow|pig|sheep)/ }).first().textContent();
       await page.getByRole('button', { name: correctAnswer! }).click();
-      await page.getByRole('button', { name: 'Next Question' }).click();
+      // Handle both "Next Question" and "Finish Quiz" buttons
+      const nextButton = page.getByRole('button', { name: 'Next Question' });
+      const finishButton = page.getByRole('button', { name: 'Finish Quiz' });
+      
+      if (await nextButton.isVisible()) {
+        await nextButton.click();
+      } else if (await finishButton.isVisible()) {
+        await finishButton.click();
+      }
       await page.waitForTimeout(100);
     }
     

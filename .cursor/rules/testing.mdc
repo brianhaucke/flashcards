@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+---
+
+# Testing
+ 
+ - Once you are done making changes to the codebase, run all the Priority 1 tests and ensure they pass.
+
+ - Once you are done making changes, proactively ask the user if you should also write new tests to cover a new functionality.
+ 

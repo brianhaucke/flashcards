@@ -49,7 +49,8 @@ test.describe('Study Mode', () => {
 
     test('should flip card when clicked', async ({ page }) => {
       // Click the card to flip it
-      await page.click('[style*="cursor: pointer"]');
+      // Click the card - target the card element directly
+      await page.locator('div[style*="transform: rotateY"]').first().click();
       
       // Check that English translation is shown
       await expect(page.getByText('the cat')).toBeVisible();
@@ -61,7 +62,8 @@ test.describe('Study Mode', () => {
 
     test('should handle correct answer', async ({ page }) => {
       // Flip the card
-      await page.click('[style*="cursor: pointer"]');
+      // Click the card - target the card element directly
+      await page.locator('div[style*="transform: rotateY"]').first().click();
       await expect(page.getByText('the cat')).toBeVisible();
       
       // Click correct answer
@@ -74,7 +76,8 @@ test.describe('Study Mode', () => {
 
     test('should handle incorrect answer', async ({ page }) => {
       // Flip the card
-      await page.click('[style*="cursor: pointer"]');
+      // Click the card - target the card element directly
+      await page.locator('div[style*="transform: rotateY"]').first().click();
       await expect(page.getByText('the cat')).toBeVisible();
       
       // Click incorrect answer
@@ -88,10 +91,15 @@ test.describe('Study Mode', () => {
     test('should complete study session and show completion screen', async ({ page }) => {
     // Go through all cards quickly
     for (let i = 0; i < 5; i++) {
-      await page.locator('[style*="cursor: pointer"]').first().click();
+      console.log(`Processing card ${i + 1}/5`);
+      // Click the card - target the card element directly
+      await page.locator('div[style*="transform: rotateY"]').first().click();
       await page.getByRole('button', { name: '✅ I got it right' }).click();
-      await page.waitForTimeout(400); // Wait for transition
+      await page.waitForTimeout(600); // Wait for transition (matching component delay)
     }
+      
+      // Wait a bit more for completion screen to appear
+      await page.waitForTimeout(1000);
       
       // Check completion screen
       await expect(page.getByRole('heading', { name: '🎉 Study Session Complete!' })).toBeVisible();
@@ -102,16 +110,20 @@ test.describe('Study Mode', () => {
 
     test('should show redo button when there are incorrect answers', async ({ page }) => {
     // Answer first card incorrectly
-    await page.locator('[style*="cursor: pointer"]').first().click();
+    await page.locator('div[style*="transform: rotateY"]').first().click();
     await page.getByRole('button', { name: '❌ I got it wrong' }).click();
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(600);
     
     // Answer remaining cards correctly
     for (let i = 1; i < 5; i++) {
-      await page.locator('[style*="cursor: pointer"]').first().click();
+      // Click the card - target the card element directly
+      await page.locator('div[style*="transform: rotateY"]').first().click();
       await page.getByRole('button', { name: '✅ I got it right' }).click();
-      await page.waitForTimeout(400);
+      await page.waitForTimeout(600);
     }
+    
+    // Wait for completion screen to appear
+    await page.waitForTimeout(1000);
       
       // Check completion screen shows redo option
       await expect(page.getByRole('button', { name: '🔄 Redo Wrong Cards (1)' })).toBeVisible();
