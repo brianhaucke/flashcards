@@ -10,17 +10,20 @@ test.describe('LocalStorage Persistence', () => {
   });
 
   test('should persist incorrect cards across page reloads', async ({ page }) => {
-    // Start study session
-    await page.goto('/study/animals');
+    // Use a seed for predictable shuffling
+    await page.goto('/study/animals?seed=123');
+    
+    // With seed=123, the first card should be 'el gato'
+    await expect(page.getByText('el gato')).toBeVisible();
     
     // Answer first card incorrectly
-    await page.locator('div[style*="transform: rotateY"]').first().click();
+    await page.getByTestId('flashcard').click();
     await page.getByRole('button', { name: '❌ I got it wrong' }).click();
     await page.waitForTimeout(400);
     
     // Answer remaining cards correctly
     for (let i = 1; i < 5; i++) {
-      await page.locator('div[style*="transform: rotateY"]').first().click();
+      await page.getByTestId('flashcard').click();
       await page.getByRole('button', { name: '✅ I got it right' }).click();
       await page.waitForTimeout(400);
     }
@@ -75,7 +78,7 @@ test.describe('LocalStorage Persistence', () => {
     await page.goto('/redo');
     
     // Answer first card correctly
-    await page.click('[style*="cursor: pointer"]');
+    await page.getByTestId('flashcard').click();
     await page.getByRole('button', { name: '✅ I got it right' }).click();
     await page.waitForTimeout(400);
     
@@ -137,16 +140,17 @@ test.describe('LocalStorage Persistence', () => {
     await expect(page.getByRole('heading', { name: '🎉 No Wrong Cards!' })).toBeVisible();
   });
 
-  test('should persist data across browser sessions', async ({ page, context }) => {
+  test('should persist data across browser sessions', async ({ page, browser }) => {
     // Set up incorrect cards
-    await page.goto('/study/animals');
-    await page.locator('div[style*="transform: rotateY"]').first().click();
+    await page.goto('/study/animals?seed=123');
+    await expect(page.getByText('el gato')).toBeVisible();
+    await page.getByTestId('flashcard').click();
     await page.getByRole('button', { name: '❌ I got it wrong' }).click();
     await page.waitForTimeout(400);
     
     // Complete session
     for (let i = 1; i < 5; i++) {
-      await page.locator('div[style*="transform: rotateY"]').first().click();
+      await page.getByTestId('flashcard').click();
       await page.getByRole('button', { name: '✅ I got it right' }).click();
       await page.waitForTimeout(400);
     }
@@ -158,8 +162,8 @@ test.describe('LocalStorage Persistence', () => {
     console.log('localStorage data before new context:', localStorageData);
     
     // Create new context (simulates new browser session)
-    const newContext = await context.browser()?.newContext();
-    const newPage = await newContext?.newPage();
+    const newBrowserContext = await browser.newContext();
+    const newPage = await newBrowserContext?.newPage();
     
     if (newPage) {
       // Go to home page in new session first
@@ -181,5 +185,6 @@ test.describe('LocalStorage Persistence', () => {
       
       await newPage.close();
     }
+    await page.evaluate(() => localStorage.clear());
   });
 });

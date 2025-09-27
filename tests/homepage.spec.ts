@@ -31,9 +31,10 @@ test.describe('Homepage', () => {
   });
 
   test('should navigate to statistics when Statistics button is clicked', async ({ page }) => {
+    await page.goto('/');
     await page.getByRole('button', { name: '📊 Statistics' }).click();
     await expect(page).toHaveURL('/stats');
-    await expect(page.getByText('Statistics - Coming Soon')).toBeVisible();
+    await expect(page.getByRole('heading', { name: '📊 Statistics' })).toBeVisible();
   });
 
   test('should not show Redo Wrong Cards button initially', async ({ page }) => {

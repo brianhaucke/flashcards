@@ -4,6 +4,7 @@ import { getCardsByCategory } from '../data/flashcards';
 import type { Flashcard } from '../data/flashcards';
 import MultipleChoiceQuiz from '../components/MultipleChoiceQuiz';
 import FillBlankQuiz from '../components/FillBlankQuiz';
+import { useStats } from '../hooks/useStats';
 
 const QuizPage: React.FC = () => {
   const { category } = useParams<{ category: string }>();
@@ -14,6 +15,7 @@ const QuizPage: React.FC = () => {
   const [cards, setCards] = useState<Flashcard[]>([]);
   const [quizComplete, setQuizComplete] = useState(false);
   const [finalStats, setFinalStats] = useState({ correct: 0, incorrect: 0 });
+  const { updateCategoryStats } = useStats();
 
   useEffect(() => {
     if (category) {
@@ -25,6 +27,13 @@ const QuizPage: React.FC = () => {
   const handleQuizComplete = (stats: { correct: number; incorrect: number }) => {
     setFinalStats(stats);
     setQuizComplete(true);
+    if (category) {
+      updateCategoryStats(category, { 
+        studied: stats.correct + stats.incorrect,
+        correct: stats.correct,
+        incorrect: stats.incorrect,
+      });
+    }
   };
 
   const handleRestart = () => {

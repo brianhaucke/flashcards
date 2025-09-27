@@ -26,7 +26,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ card, onAnswer, isFlipped, onFlip
         <div 
           className={styles.card} 
           onClick={handleCardClick}
-          data-testid="flashcard-card"
+          data-testid="flashcard"
         >
           <div className={`${styles.cardFace} ${styles.front} ${isFlipped ? styles.frontFlipped : ''}`}>
             {card.spanish}

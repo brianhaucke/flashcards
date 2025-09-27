@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import FlashcardComponent from '../components/Flashcard';
 import { useIncorrectCards } from '../hooks/useIncorrectCards';
 import styles from './StudySessionPage.module.css';
@@ -8,24 +8,36 @@ import { useStudySession } from '../hooks/useStudySession';
 const StudySessionPage: React.FC = () => {
   const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const seed = searchParams.get('seed') ? Number(searchParams.get('seed')) : undefined;
+
   const { 
     cards,
     currentCardIndex,
     isFlipped,
     sessionComplete,
     stats,
+    isLoading,
     handleFlip,
     handleAnswer,
     handleReset,
     startRedoSession,
     incorrectCards,
-  } = useStudySession(category);
+  } = useStudySession(category, seed);
 
   const handleRedoIncorrect = () => {
     if (incorrectCards.length > 0) {
       startRedoSession(incorrectCards);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>Loading cards...</div>
+      </div>
+    );
+  }
 
   if (!category || cards.length === 0) {
     return (

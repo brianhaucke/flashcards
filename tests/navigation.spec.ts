@@ -41,17 +41,17 @@ test.describe('Navigation', () => {
     await page.getByRole('button', { name: '🐾 Animals' }).click();
     
     // Study a few cards
-    await page.locator('div[style*="transform: rotateY"]').first().click();
+    await page.getByTestId('flashcard').click();
     await page.getByRole('button', { name: '✅ I got it right' }).click();
     await page.waitForTimeout(600);
     
-    await page.locator('div[style*="transform: rotateY"]').first().click();
+    await page.getByTestId('flashcard').click();
     await page.getByRole('button', { name: '❌ I got it wrong' }).click();
     await page.waitForTimeout(600);
     
     // Complete the session
     for (let i = 2; i < 5; i++) {
-      await page.locator('div[style*="transform: rotateY"]').first().click();
+      await page.getByTestId('flashcard').click();
       await page.getByRole('button', { name: '✅ I got it right' }).click();
       await page.waitForTimeout(600);
     }
@@ -69,9 +69,9 @@ test.describe('Navigation', () => {
     await expect(page.getByRole('heading', { name: '🔄 Redo Wrong Cards' })).toBeVisible();
     
     // Complete redo session
-    await page.locator('[style*="cursor: pointer"]').first().click();
+    await page.getByTestId('flashcard').click();
     await page.getByRole('button', { name: '✅ I got it right' }).click();
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(600);
     
     // Should show completion screen
     await expect(page.getByRole('heading', { name: '🎉 Redo Session Complete!' })).toBeVisible();

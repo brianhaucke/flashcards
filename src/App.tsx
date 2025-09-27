@@ -5,6 +5,7 @@ import StudySessionPage from './pages/StudySessionPage';
 import RedoPage from './pages/RedoPage';
 import QuizSelectionPage from './pages/QuizSelectionPage';
 import QuizPage from './pages/QuizPage';
+import StatsPage from './pages/StatsPage';
 import './App.css';
 
 const placeholderStyle = {
@@ -25,7 +26,7 @@ function App() {
           <Route path="/redo" element={<RedoPage />} />
           <Route path="/quiz" element={<QuizSelectionPage />} />
           <Route path="/quiz/:category" element={<QuizPage />} />
-          <Route path="/stats" element={<div style={placeholderStyle}>Statistics - Coming Soon</div>} />
+          <Route path="/stats" element={<StatsPage />} />
         </Routes>
       </div>
     </Router>
