@@ -8,13 +8,6 @@ import QuizPage from './pages/QuizPage';
 import StatsPage from './pages/StatsPage';
 import './App.css';
 
-const placeholderStyle = {
-  padding: '2rem',
-  textAlign: 'center' as const,
-  fontSize: '1.5rem',
-  color: '#6b7280'
-};
-
 function App() {
   return (
     <Router>

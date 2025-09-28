@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import FlashcardComponent from '../components/Flashcard';
-import { useIncorrectCards } from '../hooks/useIncorrectCards';
 import styles from './StudySessionPage.module.css';
 import { useStudySession } from '../hooks/useStudySession';
 
